@@ -1,0 +1,42 @@
+.ingredient {
+	position: absolute;
+	font-size: 4em;
+	padding: inherit;
+	font-weight: 200;
+}
+
+
+.ingredient .tooltip {
+	display: none;
+	width: fit-content;
+	background-color: black;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px;
+	z-index: 2;
+	bottom: 100%;
+	font-size: .5em;
+	-webkit-transition: all 0.3s ease;
+ 	-moz-transition: all 0.3s ease-in-out;
+ 	-o-transition: all 0.3s ease;
+ 	transition: all 0.3s ease-in-out;
+ 	opacity: 0;
+ 	filter: alpha(opacity=0);  
+ 	top: -4em;
+ 	left: 20em;
+}
+
+.ingredient:hover .tooltip {
+	display: block;
+	opacity: 1;
+	filter: alpha(opacity=100);
+	top: -6em;
+	left: 20em;
+	z-index: 99;
+	position: initial;
+	-webkit-transition: all 0.2s ease;
+	-moz-transition: all 0.2s ease;
+	-o-transition: all 0.2s ease;
+	transition: all 0.2s ease;
+}
