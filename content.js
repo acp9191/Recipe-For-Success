@@ -51,6 +51,8 @@ var sprgs = "sprigs";
 var sprg = "sprig";
 var pcs = "pieces";
 var pc = "piece";
+var sls = "slices";
+var sl = "slice";
 
 
 replaceMeasurement = function(mmt) {
@@ -92,8 +94,8 @@ replaceMeasurement = function(mmt) {
 			return "in";
 		case bnch:
 			return "bnch";
-		case clvs:
-			return "clvs";
+		// case clvs:
+			// return "clvs";
 		case sprgs:
 			return "sprg";
 		case sprg:
@@ -102,6 +104,10 @@ replaceMeasurement = function(mmt) {
 			return "pcs";
 		case pc:
 			return "pc";
+		// case sls:
+			// return "sl";
+		// case sl:
+			// return "sl";
 		default:
 			return mmt;
 
@@ -146,8 +152,8 @@ findMeasurement = function(recipeReq) {
 		return inch;
 	} else if (recipeReq.toUpperCase().includes(bnch.toUpperCase())) {
 		return bnch;
-	} else if (recipeReq.toUpperCase().includes(clvs.toUpperCase())) {
-		return clvs;
+	// } else if (recipeReq.toUpperCase().includes(clvs.toUpperCase())) {
+		// return clvs;
 	} else if (recipeReq.toUpperCase().includes(sprgs.toUpperCase())) {
 		return sprgs;
 	} else if (recipeReq.toUpperCase().includes(sprg.toUpperCase())) {
@@ -156,6 +162,10 @@ findMeasurement = function(recipeReq) {
 		return pcs;
 	} else if (recipeReq.toUpperCase().includes(pc.toUpperCase())) {
 		return pc;
+	// } else if (recipeReq.toUpperCase().includes(sls.toUpperCase())) {
+		// return sls;
+	// } else if (recipeReq.toUpperCase().includes(sl.toUpperCase())) {
+		// return sl;
 	} else {
 		return "";
 	}
@@ -165,7 +175,14 @@ findMeasurement = function(recipeReq) {
 splitRestOfIngredient = function(splitRest, rest, delimiter) {
 	var restArray = rest.split(delimiter);
 	splitRest.ingredient = restArray[0].trim();
-	splitRest.prep = restArray[1].trim();
+	for (var i = 1; i < restArray.length; i ++) {
+		splitRest.prep = splitRest.prep + restArray[i] + delimiter;	
+	}
+	if (splitRest.prep.substring(splitRest.prep.length - 1) == delimiter) {
+		splitRest.prep = splitRest.prep.substring(0, splitRest.prep.length - 1);
+	}
+	splitRest.prep = splitRest.prep.trim();
+
 	return splitRest;
 }
 
@@ -200,7 +217,14 @@ splitIngredient = function(rest) {
 }
 
 removeGrams = function(ingredient) {
-	return ingredient.replace(/(\/[0-9]+ (grams)?)/, "");
+	if (ingredient.includes("grams") || ingredient.includes("milliliters")) {
+		return ingredient.replace(/(\/[0-9]+ (grams)?(milliliters)?)/, "");	
+	} else if (ingredient.substring(0,2) == "of") {
+		return ingredient.replace("of", "").trim();	
+	} else {
+		return ingredient;
+	}
+	
 }
 
 parseReq = function(recipeReq) {
@@ -219,7 +243,8 @@ parseReq = function(recipeReq) {
 
 	var rest;
 	if (recipeReqObj.measurement) {
-		rest = recipeReq.split(recipeReqObj.measurement)[1].trim();
+		rest = recipeReq.split(recipeReqObj.measurement)[1];
+		if (rest) {rest = rest.trim()}
 	} else if (recipeReqObj.quantity) {
 		rest = recipeReq.split(recipeReqObj.quantity)[1].trim();
 	} else {
@@ -227,8 +252,7 @@ parseReq = function(recipeReq) {
 	}
 	var splitRest = splitIngredient(rest);
 	console.log(splitRest);
-	recipeReqObj.ingredient = splitRest.ingredient;
-	recipeReqObj.ingredient = removeGrams(recipeReqObj.ingredient)
+	recipeReqObj.ingredient = removeGrams(splitRest.ingredient);
 	recipeReqObj.prep = splitRest.prep;
 	if (recipeReqObj.quantity.includes("to")) {
 		recipeReqObj.quantity = recipeReqObj.quantity.replace(" to ", "-");
@@ -242,6 +266,36 @@ parseReq = function(recipeReq) {
 
 	return recipeReqObj;
 }
+
+function getDifference2(string_a, string_b) {
+
+	if (!string_a) {
+		return string_b;
+	}
+
+	var first_occurance = string_b.indexOf(string_a);
+ 
+   	string_a_length = string_a.length;
+
+   	if (first_occurance == 0) {
+     	new_string = string_b.substring(string_a_length);
+   	} else {
+     	new_string = string_b.substring(0, first_occurance);
+     	new_string += string_b.substring(first_occurance + string_a_length);  
+   	}
+   
+   	return new_string;
+}
+
+function replaceCloves(recipeRequirementObj) {
+	if (!recipeRequirementObj.measurement && recipeRequirementObj.prep.toUpperCase().includes(clvs.toUpperCase())) {
+		recipeRequirementObj.measurement = "clvs";
+		var diff = getDifference2(clvs, recipeRequirementObj.prep).trim();
+		recipeRequirementObj.prep = diff;
+	}
+	return recipeRequirementObj;
+}
+
 
 var ingredientsList = [];
 
@@ -275,6 +329,30 @@ for (var i = 0; i < ingredients.length; i++) {
 
 
 	recipeRequirementObj = parseReq(recipeRequirement);
+
+	var diff;
+	if (recipeRequirementObj.prep && ingredient) {
+		diff = getDifference2(ingredient, recipeRequirementObj.ingredient);	
+	}
+	
+	if (diff) {
+		recipeRequirementObj.prep = (recipeRequirementObj.prep ? diff + ", " + recipeRequirementObj.prep : diff);
+		recipeRequirementObj.ingredient = ingredient;
+		if (recipeRequirementObj.prep.substring(0,1) == "," || recipeRequirementObj.prep.substring(0,1) == ")") {
+			recipeRequirementObj.prep = recipeRequirementObj.prep.substring(1).trim();
+		}
+	}
+	if (recipeRequirementObj.prep == " ") {
+		recipeRequirementObj.prep = "";
+	}
+	console.log(recipeRequirementObj);
+
+	recipeRequirementObj = replaceCloves(recipeRequirementObj);
+
+	if (recipeRequirementObj.prep.substring(0,1) == "," || recipeRequirementObj.prep.substring(0,1) == ")") {
+		recipeRequirementObj.prep = recipeRequirementObj.prep.substring(1).trim();
+	}
+
 
 	// creates a table row
 	var row = document.createElement("tr");
@@ -315,6 +393,9 @@ for (var i = 0; i < ingredients.length; i++) {
 
 	// add the row to the end of the table body
 	tblBody.appendChild(row);
+
+	ingredient = "";
+	diff = "";
 }
 
 // put the <tbody> in the <table>
