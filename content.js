@@ -45,8 +45,12 @@ var med = "medium";
 var lg = "large";
 var pnch = "Pinch";
 var inch = "inch";
-var bnch = "bunch"
-var clvs = "cloves"
+var bnch = "bunch";
+var clvs = "cloves";
+var sprgs = "sprigs";
+var sprg = "sprig";
+var pcs = "pieces";
+var pc = "piece";
 
 
 replaceMeasurement = function(mmt) {
@@ -90,8 +94,14 @@ replaceMeasurement = function(mmt) {
 			return "bnch";
 		case clvs:
 			return "clvs";
-		case "":
-			return " ";
+		case sprgs:
+			return "sprg";
+		case sprg:
+			return "sprg";
+		case pcs:
+			return "pcs";
+		case pc:
+			return "pc";
 		default:
 			return mmt;
 
@@ -138,6 +148,14 @@ findMeasurement = function(recipeReq) {
 		return bnch;
 	} else if (recipeReq.toUpperCase().includes(clvs.toUpperCase())) {
 		return clvs;
+	} else if (recipeReq.toUpperCase().includes(sprgs.toUpperCase())) {
+		return sprgs;
+	} else if (recipeReq.toUpperCase().includes(sprg.toUpperCase())) {
+		return sprg;
+	} else if (recipeReq.toUpperCase().includes(pcs.toUpperCase())) {
+		return pcs;
+	} else if (recipeReq.toUpperCase().includes(pc.toUpperCase())) {
+		return pc;
 	} else {
 		return "";
 	}
@@ -193,7 +211,7 @@ parseReq = function(recipeReq) {
 		prep: ""
 	}
 	// matches: 4, 1/2 (unicode), 10-15
-	var quantity = recipeReq.replace(/(^[0-9 ]*([\xbc\xbd\xbe\u2153\u2154\u215B])?(-\d+)?(to \d+)?)(.+$)/i,'$1');
+	var quantity = recipeReq.replace(/(^[0-9 ]*([\xbc\xbd\xbe\u2153\u2154\u215B])?(-\d+)?(to \d+)?(or \d+)?)(.+$)/i,'$1');
 
 	recipeReqObj.quantity = (quantity != recipeReq ? quantity : "");
 
@@ -213,7 +231,9 @@ parseReq = function(recipeReq) {
 	recipeReqObj.ingredient = removeGrams(recipeReqObj.ingredient)
 	recipeReqObj.prep = splitRest.prep;
 	if (recipeReqObj.quantity.includes("to")) {
-		recipeReqObj.quantity = recipeReqObj.quantity.replace(" to ", "-")
+		recipeReqObj.quantity = recipeReqObj.quantity.replace(" to ", "-");
+	} else if (recipeReqObj.quantity.includes("or")) {
+		recipeReqObj.quantity = recipeReqObj.quantity.replace(" or ", "-");
 	}
 	recipeReqObj.measurement = replaceMeasurement(recipeReqObj.measurement);
 
