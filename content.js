@@ -159,7 +159,14 @@ splitIngredient = function(rest) {
 	console.log(rest);
 
 	if (rest) {
-		if (rest.includes("(")) {
+		if (rest.substring(0,1) == "(") {
+			console.log(rest);
+			rest = rest.replace(/(\([0-9]+ (grams)?(ml\.)?\))/, "");
+		}
+		if (rest.includes(", for")) {
+			splitRestOfIngredient(splitRest, rest, ", for");
+			splitRest.prep = "for " + splitRest.prep;
+		} else if (rest.includes("(")) {
 			splitRestOfIngredient(splitRest, rest, "(");
 			splitRest.prep = "(" + splitRest.prep;
 		// } else if (rest.includes(" or ")) {
@@ -167,8 +174,7 @@ splitIngredient = function(rest) {
 		// 	splitRest.prep = "or " + splitRest.prep;
 		} else if (rest.includes(",")) {
 			splitRestOfIngredient(splitRest, rest, ",");
-		}
-		else {
+		} else {
 			splitRest.ingredient = rest;
 		}
 	}
@@ -176,7 +182,7 @@ splitIngredient = function(rest) {
 }
 
 removeGrams = function(ingredient) {
-	return ingredient.replace(/(\/[0-9]+ grams)/, "");
+	return ingredient.replace(/(\/[0-9]+ (grams)?)/, "");
 }
 
 parseReq = function(recipeReq) {
@@ -195,11 +201,11 @@ parseReq = function(recipeReq) {
 
 	var rest;
 	if (recipeReqObj.measurement) {
-		rest = recipeReq.split(recipeReqObj.measurement)[1];
+		rest = recipeReq.split(recipeReqObj.measurement)[1].trim();
 	} else if (recipeReqObj.quantity) {
-		rest = recipeReq.split(recipeReqObj.quantity)[1];
+		rest = recipeReq.split(recipeReqObj.quantity)[1].trim();
 	} else {
-		rest = recipeReq;
+		rest = recipeReq.trim();
 	}
 	var splitRest = splitIngredient(rest);
 	console.log(splitRest);
