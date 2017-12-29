@@ -55,6 +55,7 @@ var pc = "piece";
 var sls = "slices";
 var sl = "slice";
 var sqOf = "Squeeze of";
+var jOf = "Juice of";
 
 
 replaceMeasurement = function(mmt) {
@@ -112,6 +113,8 @@ replaceMeasurement = function(mmt) {
 			return "sl";
 		case sqOf:
 			return "sq of";
+		case jOf:
+			return "j of";
 		default:
 			return mmt;
 
@@ -122,58 +125,88 @@ findMeasurement = function(recipeReq) {
 
 	recipeReq = recipeReq.toUpperCase();
 
-	if (recipeReq.toUpperCase().includes(tbsps.toUpperCase())) {
-		return tbsps;
-	} else if (recipeReq.toUpperCase().includes(tbsp.toUpperCase())) {
-		return tbsp;
-	} else if (recipeReq.toUpperCase().includes(tsps.toUpperCase())) {
-		return tsps;
-	} else if (recipeReq.toUpperCase().includes(tsp.toUpperCase())) {
-		return tsp;
-	} else if (recipeReq.toUpperCase().includes(cs.toUpperCase())) {
-		return cs;
-	} else if (recipeReq.toUpperCase().includes(c.toUpperCase())) {
-		return c;
-	} else if (recipeReq.toUpperCase().includes(ozs.toUpperCase())) {
-		return ozs;
-	} else if (recipeReq.toUpperCase().includes(oz.toUpperCase())) {
-		return oz;
-	} else if (recipeReq.toUpperCase().includes(sm.toUpperCase())) {
-		return sm;
-	} else if (recipeReq.toUpperCase().includes(med.toUpperCase())) {
-		return med;
-	} else if (recipeReq.toUpperCase().includes(lg.toUpperCase())) {
-		return lg;
-	} else if (recipeReq.toUpperCase().includes(lbs.toUpperCase())) {
-		return lbs;
-	} else if (recipeReq.toUpperCase().includes(lb.toUpperCase())) {
-		return lb;
-	} else if (recipeReq.toUpperCase().includes(g.toUpperCase())) {
-		return g;
-	} else if (recipeReq.toUpperCase().includes(pnch.toUpperCase())) {
-		return pnch;
-	} else if (recipeReq.toUpperCase().includes(inch.toUpperCase())) {
-		return inch;
-	} else if (recipeReq.toUpperCase().includes(bnch.toUpperCase())) {
-		return bnch;
-	// } else if (recipeReq.toUpperCase().includes(clvs.toUpperCase())) {
-		// return clvs;
-	} else if (recipeReq.toUpperCase().includes(sprgs.toUpperCase())) {
-		return sprgs;
-	} else if (recipeReq.toUpperCase().includes(sprg.toUpperCase())) {
-		return sprg;
-	} else if (recipeReq.toUpperCase().includes(pcs.toUpperCase())) {
-		return pcs;
-	} else if (recipeReq.toUpperCase().includes(pc.toUpperCase())) {
-		return pc;
-	} else if (recipeReq.toUpperCase().includes(sls.toUpperCase())) {
-		return sls;
-	// } else if (recipeReq.toUpperCase().includes(sl.toUpperCase())) {
-		// return sl;
-	} else if (recipeReq.toUpperCase().includes(sqOf.toUpperCase())) {
-		return sqOf;
-	} else {
+	var mmtArray = [];
+
+	if (recipeReq.includes(tbsps.toUpperCase())) {
+		mmtArray.push({mmt: tbsps, index: recipeReq.indexOf(tbsps.toUpperCase())});
+	} else if (recipeReq.includes(tbsp.toUpperCase())) {
+		mmtArray.push({mmt: tbsp, index: recipeReq.indexOf(tbsp.toUpperCase())});
+	} 
+	if (recipeReq.includes(tsps.toUpperCase())) {
+		mmtArray.push({mmt: tsps, index: recipeReq.indexOf(tsps.toUpperCase())});
+	}else if (recipeReq.includes(tsp.toUpperCase())) {
+		mmtArray.push({mmt: tsp, index: recipeReq.indexOf(tsp.toUpperCase())});
+	}
+	if (recipeReq.includes(cs.toUpperCase())) {
+		mmtArray.push({mmt: cs, index: recipeReq.indexOf(cs.toUpperCase())});
+	} else if (recipeReq.includes(c.toUpperCase())) {
+		mmtArray.push({mmt: c, index: recipeReq.indexOf(c.toUpperCase())});
+	}
+	if (recipeReq.includes(ozs.toUpperCase())) {
+		mmtArray.push({mmt: ozs, index: recipeReq.indexOf(ozs.toUpperCase())});
+	} else if (recipeReq.includes(oz.toUpperCase())) {
+		mmtArray.push({mmt: oz, index: recipeReq.indexOf(oz.toUpperCase())});
+	}
+	if (recipeReq.includes(sm.toUpperCase())) {
+		mmtArray.push({mmt: sm, index: recipeReq.indexOf(sm.toUpperCase())});
+	}
+	if (recipeReq.includes(med.toUpperCase())) {
+		mmtArray.push({mmt: med, index: recipeReq.indexOf(med.toUpperCase())});
+	}
+	if (recipeReq.includes(lg.toUpperCase())) {
+		mmtArray.push({mmt: lg, index: recipeReq.indexOf(lg.toUpperCase())});
+	}
+	if (recipeReq.includes(lbs.toUpperCase())) {
+		mmtArray.push({mmt: lbs, index: recipeReq.indexOf(lbs.toUpperCase())});
+	} else if (recipeReq.includes(lb.toUpperCase())) {
+		mmtArray.push({mmt: lb, index: recipeReq.indexOf(lb.toUpperCase())});
+	}
+	if (recipeReq.includes(g.toUpperCase())) {
+		mmtArray.push({mmt: g, index: recipeReq.indexOf(g.toUpperCase())});
+	}
+	if (recipeReq.includes(pnch.toUpperCase())) {
+		mmtArray.push({mmt: pnch, index: recipeReq.indexOf(pnch.toUpperCase())});
+	}
+	if (recipeReq.includes(inch.toUpperCase())) {
+		mmtArray.push({mmt: inch, index: recipeReq.indexOf(inch.toUpperCase())});
+	}
+	if (recipeReq.includes(bnch.toUpperCase())) {
+		mmtArray.push({mmt: bnch, index: recipeReq.indexOf(bnch.toUpperCase())});
+	}
+	if (recipeReq.includes(sprgs.toUpperCase())) {
+		mmtArray.push({mmt: sprgs, index: recipeReq.indexOf(sprgs.toUpperCase())});
+	} else if (recipeReq.includes(sprg.toUpperCase())) {
+		mmtArray.push({mmt: sprg, index: recipeReq.indexOf(sprg.toUpperCase())});
+	}
+	if (recipeReq.includes(pcs.toUpperCase())) {
+		mmtArray.push({mmt: pcs, index: recipeReq.indexOf(pcs.toUpperCase())});
+	} else if (recipeReq.includes(pc.toUpperCase())) {
+		mmtArray.push({mmt: pc, index: recipeReq.indexOf(pc.toUpperCase())});
+	}
+	if (recipeReq.includes(sls.toUpperCase())) {
+		mmtArray.push({mmt: sls, index: recipeReq.indexOf(sls.toUpperCase())});
+	}
+	if (recipeReq.includes(sqOf.toUpperCase())) {
+		mmtArray.push({mmt: sqOf, index: recipeReq.indexOf(sqOf.toUpperCase())});
+	}
+	if (recipeReq.includes(jOf.toUpperCase())) {
+		mmtArray.push({mmt: jOf, index: recipeReq.indexOf(jOf.toUpperCase())});
+	} 
+
+	var firstMmt, currentLowest;
+	console.log(mmtArray);
+
+	if (mmtArray.length <= 0) {
 		return "";
+	} else {
+		currentLowest = recipeReq.length;
+		for (var i = 0; i < mmtArray.length; i++) {
+			if (mmtArray[i].index <= currentLowest) {
+				currentLowest = mmtArray[i].index;
+				firstMmt = mmtArray[i].mmt;
+			}
+		}
+		return firstMmt;
 	}
 
 }
