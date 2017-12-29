@@ -46,6 +46,7 @@ var lg = "large";
 var pnch = "Pinch";
 var inch = "inch";
 var bnch = "bunch";
+var clv = "clove";
 var clvs = "cloves";
 var sprgs = "sprigs";
 var sprg = "sprig";
@@ -53,6 +54,7 @@ var pcs = "pieces";
 var pc = "piece";
 var sls = "slices";
 var sl = "slice";
+var sqOf = "Squeeze of";
 
 
 replaceMeasurement = function(mmt) {
@@ -104,10 +106,12 @@ replaceMeasurement = function(mmt) {
 			return "pcs";
 		case pc:
 			return "pc";
-		// case sls:
-			// return "sl";
-		// case sl:
-			// return "sl";
+		case sls:
+			return "sl";
+		case sl:
+			return "sl";
+		case sqOf:
+			return "sq of";
 		default:
 			return mmt;
 
@@ -162,10 +166,12 @@ findMeasurement = function(recipeReq) {
 		return pcs;
 	} else if (recipeReq.toUpperCase().includes(pc.toUpperCase())) {
 		return pc;
-	// } else if (recipeReq.toUpperCase().includes(sls.toUpperCase())) {
-		// return sls;
+	} else if (recipeReq.toUpperCase().includes(sls.toUpperCase())) {
+		return sls;
 	// } else if (recipeReq.toUpperCase().includes(sl.toUpperCase())) {
 		// return sl;
+	} else if (recipeReq.toUpperCase().includes(sqOf.toUpperCase())) {
+		return sqOf;
 	} else {
 		return "";
 	}
@@ -178,8 +184,8 @@ splitRestOfIngredient = function(splitRest, rest, delimiter) {
 	for (var i = 1; i < restArray.length; i ++) {
 		splitRest.prep = splitRest.prep + restArray[i] + delimiter;	
 	}
-	if (splitRest.prep.substring(splitRest.prep.length - 1) == delimiter) {
-		splitRest.prep = splitRest.prep.substring(0, splitRest.prep.length - 1);
+	if (splitRest.prep.substring(splitRest.prep.length - delimiter.length) == delimiter) {
+		splitRest.prep = splitRest.prep.substring(0, splitRest.prep.length - delimiter.length);
 	}
 	splitRest.prep = splitRest.prep.trim();
 
@@ -289,8 +295,12 @@ function getDifference2(string_a, string_b) {
 
 function replaceCloves(recipeRequirementObj) {
 	if (!recipeRequirementObj.measurement && recipeRequirementObj.prep.toUpperCase().includes(clvs.toUpperCase())) {
-		recipeRequirementObj.measurement = "clvs";
+		recipeRequirementObj.measurement = "clv";
 		var diff = getDifference2(clvs, recipeRequirementObj.prep).trim();
+		recipeRequirementObj.prep = diff;
+	} else if (!recipeRequirementObj.measurement && recipeRequirementObj.prep.toUpperCase().includes(clv.toUpperCase())) {
+		recipeRequirementObj.measurement = "clv";
+		var diff = getDifference2(clv, recipeRequirementObj.prep).trim();
 		recipeRequirementObj.prep = diff;
 	}
 	return recipeRequirementObj;
@@ -396,6 +406,7 @@ for (var i = 0; i < ingredients.length; i++) {
 
 	ingredient = "";
 	diff = "";
+	prep = "";
 }
 
 // put the <tbody> in the <table>
