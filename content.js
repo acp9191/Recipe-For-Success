@@ -1,12 +1,11 @@
 var ingredients = document.getElementsByClassName('recipe-ingredients')[0].children;
 console.log(ingredients);
-// alert(ingredients);
-// alert("hello world");
 var body = document.querySelectorAll('body')[0];
 var container = document.getElementById('container');
 var header = document.getElementById('siteNavMount');
 var recipeTitle = document.getElementsByClassName('recipe-title')[0].textContent.trim();
 var servings = document.getElementsByClassName('recipe-time-yield')[0].children[0].children[1].textContent;
+var directions = document.getElementsByClassName('recipe-steps')[0].children;
 
 container.style.display = "none";
 header.style.display = "none";
@@ -374,7 +373,7 @@ for (var i = 0; i < ingredients.length; i++) {
 	recipeRequirementObj = parseReq(recipeRequirement);
 
 	var diff;
-	if (recipeRequirementObj.prep && ingredient) {
+	if (ingredient && recipeRequirementObj.ingredient) {
 		diff = getDifference2(ingredient, recipeRequirementObj.ingredient);	
 	}
 	
@@ -446,6 +445,43 @@ for (var i = 0; i < ingredients.length; i++) {
 tbl.appendChild(tblBody);
 // appends <table> into <body>
 body.appendChild(tbl);
+
+
+for (var i = 0; i < directions.length; i++) {
+	// var direction = document.createElement('div');
+	var step = directions[i].outerHTML;
+	
+
+	for (var j = 0; j < ingredientsList.length; j++) {
+		var ingredient = ingredientsList[j], ingredientSplit;
+		if (ingredient.includes(" ")) {
+			ingredientSplit = ingredient.split(" ");
+			for (var k = 0; k < ingredientSplit.length; k++) {
+				if (step.includes(ingredientSplit[k])) {
+					console.log(ingredientSplit[k]);
+					step = step.replace(new RegExp(ingredientSplit[k], 'gi'), "<b>" + ingredientSplit[k] + "</b>");
+				}
+			}
+		} else {
+			if (step.includes(ingredient)) {
+				step = step.replace(new RegExp(ingredient, 'gi'), "<b>" + ingredient + "</b>");
+			}
+		}
+		
+	}
+	// step = step.replace(/tofu/g,'<b>tofu</b>');
+	// var directionNode = document.createTextNode(step);
+	var direction = document.createElement('div');
+	direction.innerHTML = step;
+	direction.style.fontSize = "3em";
+	direction.style.fontWeight = "200";
+	// direction.appendChild(directionNode);
+	body.appendChild(direction);
+
+	var lineBreak = document.createElement('br');
+	body.appendChild(lineBreak);
+	continue;
+}
 
 console.log(ingredientsList);
 
