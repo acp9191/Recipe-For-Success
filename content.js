@@ -446,6 +446,8 @@ tbl.appendChild(tblBody);
 // appends <table> into <body>
 body.appendChild(tbl);
 
+var commonIngredients = ["salt", "pepper", "mixture", "juice", "liquid", "water"];
+
 
 for (var i = 0; i < directions.length; i++) {
 	// var direction = document.createElement('div');
@@ -458,17 +460,28 @@ for (var i = 0; i < directions.length; i++) {
 			ingredientSplit = ingredient.split(" ");
 			for (var k = 0; k < ingredientSplit.length; k++) {
 				if (step.includes(ingredientSplit[k])) {
-					console.log(ingredientSplit[k]);
-					step = step.replace(new RegExp(ingredientSplit[k], 'gi'), "<b>" + ingredientSplit[k] + "</b>");
+					step = step.replace(new RegExp('\\b' + ingredientSplit[k] + '\\b', 'gi'), "<b>" + ingredientSplit[k] + "</b>");
 				}
 			}
 		} else {
 			if (step.includes(ingredient)) {
-				step = step.replace(new RegExp(ingredient, 'gi'), "<b>" + ingredient + "</b>");
+				step = step.replace(new RegExp('\\b' + ingredient + '\\b', 'gi'), "<b>" + ingredient + "</b>");
 			}
 		}
 		
 	}
+
+	for (var j = 0; j < commonIngredients.length; j++) {
+		var ingredient = commonIngredients[j];
+		if (step.includes(ingredient)) {
+				step = step.replace(new RegExp('\\b' + ingredient + '\\b', 'gi'), "<b>" + ingredient + "</b>");
+			}
+	}
+
+	if (step.includes("minute")) {
+		step = step.replace(/(minute)(s)?/g, "min");	
+	}
+	
 	// step = step.replace(/tofu/g,'<b>tofu</b>');
 	// var directionNode = document.createTextNode(step);
 	var direction = document.createElement('div');
