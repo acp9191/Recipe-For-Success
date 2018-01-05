@@ -245,8 +245,8 @@ splitIngredient = function(rest) {
 		// } else if (rest.includes(" or ")) {
 		// 	splitRestOfIngredient(splitRest, rest, "or");
 		// 	splitRest.prep = "or " + splitRest.prep;
-		} else if (rest.includes(",")) {
-			splitRestOfIngredient(splitRest, rest, ",");
+		// } else if (rest.includes(",")) {
+		// 	splitRestOfIngredient(splitRest, rest, ",");
 		} else {
 			splitRest.ingredient = rest;
 		}
@@ -357,7 +357,7 @@ for (var i = 0; i < ingredients.length; i++) {
 	var ingredient, post;
 	if (childNodes[1]) {
 		ingredient = childNodes[1].textContent;
-		ingredientsList.push(ingredient);
+		console.log("ingredient:", ingredient);
 	}
 	if (childNodes[2]) {
 		post = childNodes[2].textContent.trim();
@@ -368,7 +368,6 @@ for (var i = 0; i < ingredients.length; i++) {
 		+ (ingredient ? ingredient + " " : "")
 		+ (post ? post : "");
 	console.log(recipeRequirement);
-
 
 	recipeRequirementObj = parseReq(recipeRequirement);
 
@@ -388,6 +387,7 @@ for (var i = 0; i < ingredients.length; i++) {
 		recipeRequirementObj.prep = "";
 	}
 	console.log(recipeRequirementObj);
+	ingredientsList.push(recipeRequirementObj.ingredient);
 
 	recipeRequirementObj = replaceCloves(recipeRequirementObj);
 
@@ -446,19 +446,26 @@ tbl.appendChild(tblBody);
 // appends <table> into <body>
 body.appendChild(tbl);
 
-var commonIngredients = ["salt", "pepper", "mixture", "juice", "liquid", "water"];
+var commonIngredients = ["salt", "pepper", "mixture", "lemon", "juice", "liquid", "water", "meat", "beef", "steak"];
 
+var newDirections = document.createElement('ul');
+newDirections.style.fontSize = "3em";
+newDirections.style.fontWeight = "200";
+// newDirections.style.listStyle = "decimal";
+body.appendChild(newDirections);
 
 for (var i = 0; i < directions.length; i++) {
 	// var direction = document.createElement('div');
 	var step = directions[i].outerHTML;
-	
 
 	for (var j = 0; j < ingredientsList.length; j++) {
 		var ingredient = ingredientsList[j], ingredientSplit;
 		if (ingredient.includes(" ")) {
 			ingredientSplit = ingredient.split(" ");
 			for (var k = 0; k < ingredientSplit.length; k++) {
+				if (ingredientSplit[k] == 'or' || ingredientSplit[k] == 'and' || ingredientSplit[k] == 'to') {
+					continue;
+				}
 				if (step.includes(ingredientSplit[k])) {
 					step = step.replace(new RegExp('\\b' + ingredientSplit[k] + '\\b', 'gi'), "<b>" + ingredientSplit[k] + "</b>");
 				}
@@ -481,19 +488,17 @@ for (var i = 0; i < directions.length; i++) {
 	if (step.includes("minute")) {
 		step = step.replace(/(minute)(s)?/g, "min");	
 	}
-	
-	// step = step.replace(/tofu/g,'<b>tofu</b>');
-	// var directionNode = document.createTextNode(step);
-	var direction = document.createElement('div');
-	direction.innerHTML = step;
-	direction.style.fontSize = "3em";
-	direction.style.fontWeight = "200";
-	// direction.appendChild(directionNode);
-	body.appendChild(direction);
 
-	var lineBreak = document.createElement('br');
-	body.appendChild(lineBreak);
-	continue;
+	if (step.match(new RegExp(/(\d{3} degrees)/))) {
+		step = step.replace(new RegExp(/(\d{3}) (degrees)?/), "<b>$1</b>");
+	}
+	
+	var direction = document.createElement('div');
+	direction.style.borderBottom = "1px solid black";
+	direction.style.listStyle = "decimal";
+	direction.style.padding = "1.5em";
+	direction.innerHTML = step;
+	newDirections.appendChild(direction);
 }
 
 console.log(ingredientsList);
