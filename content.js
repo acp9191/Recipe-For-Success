@@ -55,6 +55,11 @@ var sls = "slices";
 var sl = "slice";
 var sqOf = "Squeeze of";
 var jOf = "Juice of";
+var sprngs = "springs";
+var sprng = "spring";
+var qts = "quarts";
+var qt = "quart";
+var hndfl = "handful";
 
 
 replaceMeasurement = function(mmt) {
@@ -96,8 +101,6 @@ replaceMeasurement = function(mmt) {
 			return "in";
 		case bnch:
 			return "bnch";
-		// case clvs:
-			// return "clvs";
 		case sprgs:
 			return "sprg";
 		case sprg:
@@ -114,83 +117,133 @@ replaceMeasurement = function(mmt) {
 			return "sq of";
 		case jOf:
 			return "j of";
+		case sprng:
+			return "sprng";
+		case sprngs:
+			return "sprngs";
+		case qts:
+			return "qt";
+		case qt:
+			return "qt";
+		case hndfl:
+			return "hndfl";
 		default:
 			return mmt;
 
 	}
 }
+addToMmtArray = function(mmtArray, mmt, recipeReq, mmtUpper) {
+	return mmtArray.push({mmt: mmt, index: recipeReq.indexOf(mmtUpper)});
+}
 
 findMeasurement = function(recipeReq) {
 
 	recipeReq = recipeReq.toUpperCase();
+	var tbspsUpper = tbsps.toUpperCase();
+	var tbspUpper = tbsp.toUpperCase();
+	var tspsUpper = tsps.toUpperCase();
+	var tspUpper = tsp.toUpperCase();
+	var csUpper = cs.toUpperCase();
+	var cUpper = c.toUpperCase();
+	var ozsUpper = ozs.toUpperCase();
+	var ozUpper = oz.toUpperCase();
+	var smUpper = sm.toUpperCase();
+	var medUpper = med.toUpperCase();
+	var lgUpper = lg.toUpperCase();
+	var lbsUpper = lbs.toUpperCase();
+	var lbUpper = lb.toUpperCase();
+	var gUpper = g.toUpperCase();
+	var pnchUpper = pnch.toUpperCase();
+	var inchUpper = inch.toUpperCase();
+	var bnchUpper = bnch.toUpperCase();
+	var sprgsUpper = sprgs.toUpperCase();
+	var sprgUpper = sprg.toUpperCase();
+	var pcsUpper = pcs.toUpperCase();
+	var pcUpper = pc.toUpperCase();
+	var slsUpper = sls.toUpperCase();
+	var sqOfUpper = sqOf.toUpperCase();
+	var jOfUpper = jOf.toUpperCase();
+	var sprngsUpper = sprngs.toUpperCase();
+	var sprngUpper = sprng.toUpperCase();
+	var qtsUpper = qts.toUpperCase();
+	var qtUpper = qt.toUpperCase();
+	var hndflUpper = hndfl.toUpperCase();
 
 	var mmtArray = [];
 
-	if (recipeReq.includes(tbsps.toUpperCase())) {
-		mmtArray.push({mmt: tbsps, index: recipeReq.indexOf(tbsps.toUpperCase())});
-	} else if (recipeReq.includes(tbsp.toUpperCase())) {
-		mmtArray.push({mmt: tbsp, index: recipeReq.indexOf(tbsp.toUpperCase())});
+	if (recipeReq.includes(tbspsUpper)) {
+		addToMmtArray(mmtArray, tbsps, recipeReq, tbspsUpper);
+	} else if (recipeReq.includes(tbspUpper)) {
+		addToMmtArray(mmtArray, tbsp, recipeReq, tbspUpper);
 	} 
-	if (recipeReq.includes(tsps.toUpperCase())) {
-		mmtArray.push({mmt: tsps, index: recipeReq.indexOf(tsps.toUpperCase())});
-	}else if (recipeReq.includes(tsp.toUpperCase())) {
-		mmtArray.push({mmt: tsp, index: recipeReq.indexOf(tsp.toUpperCase())});
+	if (recipeReq.includes(tspsUpper)) {
+		addToMmtArray(mmtArray, tsps, recipeReq, tspsUpper);
+	} else if (recipeReq.includes(tspUpper)) {
+		addToMmtArray(mmtArray, tsp, recipeReq, tspUpper);
 	}
-	if (recipeReq.includes(cs.toUpperCase())) {
-		mmtArray.push({mmt: cs, index: recipeReq.indexOf(cs.toUpperCase())});
+	if (recipeReq.includes(csUpper)) {
+		addToMmtArray(mmtArray, cs, recipeReq, csUpper);
 	} else if (recipeReq.includes(c.toUpperCase())) {
-		mmtArray.push({mmt: c, index: recipeReq.indexOf(c.toUpperCase())});
+		addToMmtArray(mmtArray, c, recipeReq, cUpper);
 	}
-	if (recipeReq.includes(ozs.toUpperCase())) {
-		mmtArray.push({mmt: ozs, index: recipeReq.indexOf(ozs.toUpperCase())});
-	} else if (recipeReq.includes(oz.toUpperCase())) {
-		mmtArray.push({mmt: oz, index: recipeReq.indexOf(oz.toUpperCase())});
+	if (recipeReq.includes(ozsUpper)) {
+		addToMmtArray(mmtArray, ozs, recipeReq, ozsUpper);
+	} else if (recipeReq.includes(ozUpper)) {
+		addToMmtArray(mmtArray, oz, recipeReq, ozUpper);
 	}
-	if (recipeReq.includes(sm.toUpperCase())) {
-		mmtArray.push({mmt: sm, index: recipeReq.indexOf(sm.toUpperCase())});
+	if (recipeReq.includes(smUpper)) {
+		addToMmtArray(mmtArray, sm, recipeReq, smUpper);
 	}
-	if (recipeReq.includes(med.toUpperCase())) {
-		mmtArray.push({mmt: med, index: recipeReq.indexOf(med.toUpperCase())});
+	if (recipeReq.includes(medUpper)) {
+		addToMmtArray(mmtArray, med, recipeReq, medUpper);
 	}
-	if (recipeReq.includes(lg.toUpperCase())) {
-		mmtArray.push({mmt: lg, index: recipeReq.indexOf(lg.toUpperCase())});
+	if (recipeReq.includes(lgUpper)) {
+		addToMmtArray(mmtArray, lg, recipeReq, lgUpper);
 	}
-	if (recipeReq.includes(lbs.toUpperCase())) {
-		mmtArray.push({mmt: lbs, index: recipeReq.indexOf(lbs.toUpperCase())});
+	if (recipeReq.includes(lbsUpper)) {
+		addToMmtArray(mmtArray, lbs, recipeReq, lbsUpper);
 	} else if (recipeReq.includes(lb.toUpperCase())) {
-		mmtArray.push({mmt: lb, index: recipeReq.indexOf(lb.toUpperCase())});
+		addToMmtArray(mmtArray, lb, recipeReq, lbUpper);
 	}
-	if (recipeReq.includes(g.toUpperCase())) {
-		mmtArray.push({mmt: g, index: recipeReq.indexOf(g.toUpperCase())});
+	if (recipeReq.includes(gUpper)) {
+		addToMmtArray(mmtArray, g, recipeReq, gUpper);
 	}
-	if (recipeReq.includes(pnch.toUpperCase())) {
-		mmtArray.push({mmt: pnch, index: recipeReq.indexOf(pnch.toUpperCase())});
+	if (recipeReq.includes(pnchUpper)) {
+		addToMmtArray(mmtArray, pnch, recipeReq, pnchUpper);
 	}
-	if (recipeReq.includes(inch.toUpperCase())) {
-		mmtArray.push({mmt: inch, index: recipeReq.indexOf(inch.toUpperCase())});
+	if (recipeReq.includes(inchUpper)) {
+		addToMmtArray(mmtArray, inch, recipeReq, inchUpper);
 	}
-	if (recipeReq.includes(bnch.toUpperCase())) {
-		mmtArray.push({mmt: bnch, index: recipeReq.indexOf(bnch.toUpperCase())});
+	if (recipeReq.includes(bnchUpper)) {
+		addToMmtArray(mmtArray, bnch, recipeReq, bnchUpper);
 	}
-	if (recipeReq.includes(sprgs.toUpperCase())) {
-		mmtArray.push({mmt: sprgs, index: recipeReq.indexOf(sprgs.toUpperCase())});
-	} else if (recipeReq.includes(sprg.toUpperCase())) {
-		mmtArray.push({mmt: sprg, index: recipeReq.indexOf(sprg.toUpperCase())});
+	if (recipeReq.includes(sprgsUpper)) {
+		addToMmtArray(mmtArray, sprgs, recipeReq, sprgsUpper);
+	} else if (recipeReq.includes(sprgUpper)) {
+		addToMmtArray(mmtArray, sprg, recipeReq, sprgUpper);
 	}
-	if (recipeReq.includes(pcs.toUpperCase())) {
-		mmtArray.push({mmt: pcs, index: recipeReq.indexOf(pcs.toUpperCase())});
-	} else if (recipeReq.includes(pc.toUpperCase())) {
-		mmtArray.push({mmt: pc, index: recipeReq.indexOf(pc.toUpperCase())});
+	if (recipeReq.includes(pcsUpper)) {
+		addToMmtArray(mmtArray, pcs, recipeReq, pcsUpper);
+	} else if (recipeReq.includes(pcUpper)) {
+		addToMmtArray(mmtArray, pc, recipeReq, pcUpper);
 	}
-	if (recipeReq.includes(sls.toUpperCase())) {
-		mmtArray.push({mmt: sls, index: recipeReq.indexOf(sls.toUpperCase())});
+	if (recipeReq.includes(slsUpper)) {
+		addToMmtArray(mmtArray, sls, recipeReq, slsUpper);
 	}
-	if (recipeReq.includes(sqOf.toUpperCase())) {
-		mmtArray.push({mmt: sqOf, index: recipeReq.indexOf(sqOf.toUpperCase())});
+	if (recipeReq.includes(sqOfUpper)) {
+		addToMmtArray(mmtArray, sqOf, recipeReq, sqOfUpper);
 	}
-	if (recipeReq.includes(jOf.toUpperCase())) {
-		mmtArray.push({mmt: jOf, index: recipeReq.indexOf(jOf.toUpperCase())});
+	if (recipeReq.includes(jOfUpper)) {
+		addToMmtArray(mmtArray, jOf, recipeReq, jOfUpper);
 	} 
+	if (recipeReq.includes(qtsUpper)) {
+		addToMmtArray(mmtArray, qts, recipeReq, qtsUpper);
+	} else if (recipeReq.includes(qtUpper)) {
+		addToMmtArray(mmtArray, qt, recipeReq, qtUpper);
+	}
+	if (recipeReq.includes(hndflUpper)) {
+		addToMmtArray(mmtArray, hndfl, recipeReq, hndflUpper);
+	}
 
 	var firstMmt, currentLowest;
 	console.log(mmtArray);
@@ -386,6 +439,7 @@ for (var i = 0; i < ingredients.length; i++) {
 	if (recipeRequirementObj.prep == " ") {
 		recipeRequirementObj.prep = "";
 	}
+
 	console.log(recipeRequirementObj);
 	ingredientsList.push(recipeRequirementObj.ingredient);
 
@@ -400,8 +454,13 @@ for (var i = 0; i < ingredients.length; i++) {
 	var row = document.createElement("tr");
 	row.style.borderBottom = "1px solid black"
 	row.style.height = "5em";
+	row.style.padding = "1em";
 
 	var quantityCell = document.createElement("td");
+	if (!recipeRequirementObj.quantity && !recipeRequirementObj.measurement) {
+		recipeRequirementObj.quantity = ".";
+		quantityCell.style.color = "white";
+	}
 	quantityCell.style.fontSize = "4em";
 	quantityCell.style.padding = "inherit";
 	var quantityCellText = document.createTextNode(recipeRequirementObj.quantity);
@@ -446,16 +505,27 @@ tbl.appendChild(tblBody);
 // appends <table> into <body>
 body.appendChild(tbl);
 
-var commonIngredients = ["salt", "pepper", "mixture", "lemon", "juice", "liquid", "water", "meat", "beef", "steak"];
+var commonIngredients = [
+	"salt", 
+	"pepper", 
+	"mixture", 
+	"lemon", 
+	"juice", 
+	"liquid", 
+	"water", 
+	"meat", 
+	"beef", 
+	"steak", 
+	"pasta", 
+	"chicken", 
+	"sauce"];
 
 var newDirections = document.createElement('ul');
 newDirections.style.fontSize = "3em";
 newDirections.style.fontWeight = "200";
-// newDirections.style.listStyle = "decimal";
 body.appendChild(newDirections);
 
 for (var i = 0; i < directions.length; i++) {
-	// var direction = document.createElement('div');
 	var step = directions[i].outerHTML;
 
 	for (var j = 0; j < ingredientsList.length; j++) {
@@ -463,7 +533,11 @@ for (var i = 0; i < directions.length; i++) {
 		if (ingredient.includes(" ")) {
 			ingredientSplit = ingredient.split(" ");
 			for (var k = 0; k < ingredientSplit.length; k++) {
-				if (ingredientSplit[k] == 'or' || ingredientSplit[k] == 'and' || ingredientSplit[k] == 'to') {
+				if (ingredientSplit[k] == 'or' || 
+					ingredientSplit[k] == 'and' || 
+					ingredientSplit[k] == 'to' || 
+					ingredientSplit[k] == 'a' ||
+					ingredientSplit[k] == 'of') {
 					continue;
 				}
 				if (step.includes(ingredientSplit[k])) {
