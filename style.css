@@ -40,3 +40,32 @@
 	-o-transition: all 0.2s ease;
 	transition: all 0.2s ease;
 }
+
+.requirement-row {
+	border-bottom: 1px solid black;
+	height: 5em;
+	padding: 1em;
+}
+
+.quantity-cell {
+	font-size: 4em;
+	padding: inherit;
+}
+
+.measurement {
+	font-size: 2.5em;
+	font-style: italic;
+	padding: .5em;
+	text-align: center;
+}
+
+.new-directions {
+	font-size: 3em;
+	font-weight: 200;
+}
+
+.direction {
+	border-bottom: 1px solid black;
+	list-style: decimal;
+	padding: 1.5em;
+}

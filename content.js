@@ -295,11 +295,6 @@ splitIngredient = function(rest) {
 		} else if (rest.includes("(")) {
 			splitRestOfIngredient(splitRest, rest, "(");
 			splitRest.prep = "(" + splitRest.prep;
-		// } else if (rest.includes(" or ")) {
-		// 	splitRestOfIngredient(splitRest, rest, "or");
-		// 	splitRest.prep = "or " + splitRest.prep;
-		// } else if (rest.includes(",")) {
-		// 	splitRestOfIngredient(splitRest, rest, ",");
 		} else {
 			splitRest.ingredient = rest;
 		}
@@ -452,26 +447,20 @@ for (var i = 0; i < ingredients.length; i++) {
 
 	// creates a table row
 	var row = document.createElement("tr");
-	row.style.borderBottom = "1px solid black"
-	row.style.height = "5em";
-	row.style.padding = "1em";
+	row.classList.add("requirement-row");
 
 	var quantityCell = document.createElement("td");
+	quantityCell.classList.add("quantity-cell");
 	if (!recipeRequirementObj.quantity && !recipeRequirementObj.measurement) {
 		recipeRequirementObj.quantity = ".";
 		quantityCell.style.color = "white";
 	}
-	quantityCell.style.fontSize = "4em";
-	quantityCell.style.padding = "inherit";
 	var quantityCellText = document.createTextNode(recipeRequirementObj.quantity);
 	quantityCell.appendChild(quantityCellText);
 	row.appendChild(quantityCell);
 
 	var preCell = document.createElement("td");
-	preCell.style.fontSize = "2.5em";
-	preCell.style.fontStyle = "italic";
-	preCell.style.padding = ".5em";
-	preCell.style.textAlign = "center";
+	preCell.classList.add("measurement");
 	var preCellText = document.createTextNode(recipeRequirementObj.measurement);
 	preCell.appendChild(preCellText);
 	row.appendChild(preCell);
@@ -483,10 +472,8 @@ for (var i = 0; i < ingredients.length; i++) {
 	row.appendChild(ingredientCell);
 
 	if (recipeRequirementObj.prep) {
-		// post = replaceMeasurements(post);
 		var postCell = document.createElement("span");
 		var postCellText = document.createTextNode(recipeRequirementObj.prep);
-		// ingredientCell.style.textDecoration = "underline";
 		postCell.classList.add("tooltip");
 		postCell.appendChild(postCellText);
 		ingredientCell.appendChild(postCell);
@@ -518,11 +505,11 @@ var commonIngredients = [
 	"steak", 
 	"pasta", 
 	"chicken", 
+	"soup",
 	"sauce"];
 
 var newDirections = document.createElement('ul');
-newDirections.style.fontSize = "3em";
-newDirections.style.fontWeight = "200";
+newDirections.classList.add("new-directions");
 body.appendChild(newDirections);
 
 for (var i = 0; i < directions.length; i++) {
@@ -568,9 +555,7 @@ for (var i = 0; i < directions.length; i++) {
 	}
 	
 	var direction = document.createElement('div');
-	direction.style.borderBottom = "1px solid black";
-	direction.style.listStyle = "decimal";
-	direction.style.padding = "1.5em";
+	direction.classList.add("direction");
 	direction.innerHTML = step;
 	newDirections.appendChild(direction);
 }
