@@ -4,7 +4,7 @@ var body = document.querySelectorAll('body')[0];
 var container = document.getElementById('container');
 var header = document.getElementById('siteNavMount');
 var recipeTitle = document.getElementsByClassName('recipe-title')[0].textContent.trim();
-var servings = document.getElementsByClassName('recipe-time-yield')[0].children[0].children[1].textContent;
+var subtitles = document.getElementsByClassName('recipe-yield-value');
 var directions = document.getElementsByClassName('recipe-steps')[0].children;
 
 container.style.display = "none";
@@ -12,18 +12,20 @@ header.style.display = "none";
 body.style.background = "white";
 
 var title = document.createElement('div');
-title.style.textAlign = "center";
-title.style.fontSize = "4em";
-title.style.fontFamily = "nyt-cheltenham";
-title.style.margin = "1em";
+title.classList.add("new-recipe-title");
 var titleNode = document.createTextNode(recipeTitle);
 title.appendChild(titleNode);
 body.appendChild(title);
 
+var timeElement = document.createElement('div');
+timeElement.classList.add("new-recipe-subtitle");
+var timeNode = document.createTextNode(subtitles[1].textContent);
+timeElement.appendChild(timeNode);
+title.appendChild(timeElement);
+
 var servingsElement = document.createElement('div');
-servingsElement.style.textAlign = "center";
-servingsElement.style.fontSize = ".5em";
-var servingsNode = document.createTextNode(servings);
+servingsElement.classList.add("new-recipe-subtitle");
+var servingsNode = document.createTextNode(subtitles[0].textContent);
 servingsElement.appendChild(servingsNode);
 title.appendChild(servingsElement);
 
@@ -55,11 +57,14 @@ var sls = "slices";
 var sl = "slice";
 var sqOf = "Squeeze of";
 var jOf = "Juice of";
+var zstOf = "Zest of";
 var sprngs = "springs";
 var sprng = "spring";
 var qts = "quarts";
 var qt = "quart";
 var hndfl = "handful";
+var stlks = "stalks";
+var stlk = "stalk";
 
 
 replaceMeasurement = function(mmt) {
@@ -117,6 +122,8 @@ replaceMeasurement = function(mmt) {
 			return "sq of";
 		case jOf:
 			return "j of";
+		case zstOf:
+			return "zst of";
 		case sprng:
 			return "sprng";
 		case sprngs:
@@ -163,6 +170,7 @@ findMeasurement = function(recipeReq) {
 	var slsUpper = sls.toUpperCase();
 	var sqOfUpper = sqOf.toUpperCase();
 	var jOfUpper = jOf.toUpperCase();
+	var zstOfUpper = zstOf.toUpperCase();
 	var sprngsUpper = sprngs.toUpperCase();
 	var sprngUpper = sprng.toUpperCase();
 	var qtsUpper = qts.toUpperCase();
@@ -235,6 +243,9 @@ findMeasurement = function(recipeReq) {
 	}
 	if (recipeReq.includes(jOfUpper)) {
 		addToMmtArray(mmtArray, jOf, recipeReq, jOfUpper);
+	}
+	if (recipeReq.includes(zstOfUpper)) {
+		addToMmtArray(mmtArray, zstOf, recipeReq, zstOfUpper);
 	} 
 	if (recipeReq.includes(qtsUpper)) {
 		addToMmtArray(mmtArray, qts, recipeReq, qtsUpper);
@@ -390,7 +401,7 @@ function replaceCloves(recipeRequirementObj) {
 var ingredientsList = [];
 
 var tbl = document.createElement("table");
-tbl.style.margin = "2em";
+tbl.classList.add("ingredients-table");
 var tblBody = document.createElement("tbody");
 
 // creating all cells
@@ -413,7 +424,7 @@ for (var i = 0; i < ingredients.length; i++) {
 
 	var recipeRequirement = (quantity ? quantity + " " : "") 
 		+ (pre ? pre + " " : "")
-		+ (ingredient ? ingredient + " " : "")
+		+ ingredient
 		+ (post ? post : "");
 	console.log(recipeRequirement);
 
@@ -425,9 +436,16 @@ for (var i = 0; i < ingredients.length; i++) {
 	}
 	
 	if (diff) {
+		console.log("diff:", diff);
 		recipeRequirementObj.prep = (recipeRequirementObj.prep ? diff + ", " + recipeRequirementObj.prep : diff);
 		recipeRequirementObj.ingredient = ingredient;
-		if (recipeRequirementObj.prep.substring(0,1) == "," || recipeRequirementObj.prep.substring(0,1) == ")") {
+		if (recipeRequirementObj.prep.includes(" , ")) {
+			recipeRequirementObj.prep = recipeRequirementObj.prep.replace(" , ", ", ");
+		}
+		var firstChar = recipeRequirementObj.prep.substring(0,1);
+		if (firstChar == "," ||
+			firstChar == ")" ||
+			firstChar == "(") {
 			recipeRequirementObj.prep = recipeRequirementObj.prep.substring(1).trim();
 		}
 	}
@@ -506,11 +524,21 @@ var commonIngredients = [
 	"pasta", 
 	"chicken", 
 	"soup",
+	"cheese",
+	"herbs",
+	"vegetables",
+	"dough",
+	"panko",
+	"meatballs",
 	"sauce"];
 
 var newDirections = document.createElement('ul');
 newDirections.classList.add("new-directions");
 body.appendChild(newDirections);
+
+function boldIngredient(step, ingredient) {
+	return step.replace(new RegExp('\\b' + ingredient + '\\b', 'gi'), "<b>" + ingredient + "</b>");
+}
 
 for (var i = 0; i < directions.length; i++) {
 	var step = directions[i].outerHTML;
@@ -520,20 +548,27 @@ for (var i = 0; i < directions.length; i++) {
 		if (ingredient.includes(" ")) {
 			ingredientSplit = ingredient.split(" ");
 			for (var k = 0; k < ingredientSplit.length; k++) {
-				if (ingredientSplit[k] == 'or' || 
-					ingredientSplit[k] == 'and' || 
-					ingredientSplit[k] == 'to' || 
-					ingredientSplit[k] == 'a' ||
-					ingredientSplit[k] == 'of') {
+				var ingredient = ingredientSplit[k];
+				var ingredientLowerCase = ingredient.toLowerCase();
+				if (ingredient == 'or' ||
+					ingredient == 'and' ||
+					ingredient == 'to' ||
+					ingredient == 'a' ||
+					ingredient == 'of') {
 					continue;
 				}
-				if (step.includes(ingredientSplit[k])) {
-					step = step.replace(new RegExp('\\b' + ingredientSplit[k] + '\\b', 'gi'), "<b>" + ingredientSplit[k] + "</b>");
+				if (step.includes(ingredient)) {
+					step = boldIngredient(step, ingredient);
+				} else if (step.includes(ingredientLowerCase)) {
+					step = boldIngredient(step, ingredientLowerCase);
 				}
 			}
 		} else {
+			var ingredientLowerCase = ingredient.toLowerCase();
 			if (step.includes(ingredient)) {
-				step = step.replace(new RegExp('\\b' + ingredient + '\\b', 'gi'), "<b>" + ingredient + "</b>");
+				step = boldIngredient(step, ingredient);
+			} else if (step.includes(ingredientLowerCase)) {
+				step = boldIngredient(step, ingredientLowerCase);
 			}
 		}
 		

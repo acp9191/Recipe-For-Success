@@ -1,40 +1,33 @@
 .ingredient {
-	position: absolute;
+	position: relative;
+	display: inline-block;
 	font-size: 4em;
-	padding: inherit;
+	padding: .6em;
 	font-weight: 200;
 }
 
 
 .ingredient .tooltip {
-	display: none;
+	visibility: hidden;
 	width: fit-content;
-	background-color: black;
-	color: #fff;
 	text-align: center;
-	border-radius: 6px;
-	padding: 5px;
-	z-index: 2;
-	bottom: 100%;
+	padding: .25em;
+	margin: .5em;
+	z-index: 1;
 	font-size: .5em;
+	opacity: 0;
+	filter: alpha(opacity=0);
+
 	-webkit-transition: all 0.3s ease;
  	-moz-transition: all 0.3s ease-in-out;
  	-o-transition: all 0.3s ease;
  	transition: all 0.3s ease-in-out;
- 	opacity: 0;
- 	filter: alpha(opacity=0);  
- 	top: -4em;
- 	left: 20em;
 }
 
 .ingredient:hover .tooltip {
-	display: block;
+	visibility: visible;
 	opacity: 1;
-	filter: alpha(opacity=100);
-	top: -6em;
-	left: 20em;
-	z-index: 99;
-	position: initial;
+	
 	-webkit-transition: all 0.2s ease;
 	-moz-transition: all 0.2s ease;
 	-o-transition: all 0.2s ease;
@@ -49,13 +42,13 @@
 
 .quantity-cell {
 	font-size: 4em;
-	padding: inherit;
+	padding: .6em;
 }
 
 .measurement {
 	font-size: 2.5em;
 	font-style: italic;
-	padding: .5em;
+	padding: .6em;
 	text-align: center;
 }
 
@@ -68,4 +61,21 @@
 	border-bottom: 1px solid black;
 	list-style: decimal;
 	padding: 1.5em;
+}
+
+.new-recipe-title {
+	text-align: center;
+	font-size: 5em;
+	font-family: nyt-cheltenham;
+	margin: 1em;
+}
+
+.new-recipe-subtitle {
+	text-align: center;
+	font-size: .5em;
+}
+
+.ingredients-table {
+	margin: 2em;
+	width: -webkit-fill-available;
 }
