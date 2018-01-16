@@ -17,6 +17,7 @@
 	font-size: .5em;
 	opacity: 0;
 	filter: alpha(opacity=0);
+	vertical-align: middle;
 
 	-webkit-transition: all 0.3s ease;
  	-moz-transition: all 0.3s ease-in-out;
@@ -78,4 +79,20 @@
 .ingredients-table {
 	margin: 2em;
 	width: -webkit-fill-available;
+}
+
+.picture-container {
+	text-align: center;
+}
+
+.link {
+	color: black;
+}
+
+.link:visited {
+	color: black;
+}
+
+.link:link {
+	color: black;
 }

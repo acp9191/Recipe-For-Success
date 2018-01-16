@@ -1,11 +1,11 @@
 var ingredients = document.getElementsByClassName('recipe-ingredients')[0].children;
-console.log(ingredients);
 var body = document.querySelectorAll('body')[0];
 var container = document.getElementById('container');
 var header = document.getElementById('siteNavMount');
 var recipeTitle = document.getElementsByClassName('recipe-title')[0].textContent.trim();
 var subtitles = document.getElementsByClassName('recipe-yield-value');
 var directions = document.getElementsByClassName('recipe-steps')[0].children;
+var picture = document.getElementsByClassName('media-container')[0].children[0];
 
 container.style.display = "none";
 header.style.display = "none";
@@ -28,6 +28,14 @@ servingsElement.classList.add("new-recipe-subtitle");
 var servingsNode = document.createTextNode(subtitles[0].textContent);
 servingsElement.appendChild(servingsNode);
 title.appendChild(servingsElement);
+
+var pictureContainer = document.createElement('div');
+pictureContainer.classList.add('picture-container');
+body.appendChild(pictureContainer)
+
+var pictureElement = document.createElement('img');
+pictureElement.src = picture.src;
+pictureContainer.appendChild(pictureElement);
 
 var tbsps = "tablespoons";
 var tbsp = "tablespoon";
@@ -65,6 +73,7 @@ var qt = "quart";
 var hndfl = "handful";
 var stlks = "stalks";
 var stlk = "stalk";
+var whole = "whole";
 
 
 replaceMeasurement = function(mmt) {
@@ -134,6 +143,8 @@ replaceMeasurement = function(mmt) {
 			return "qt";
 		case hndfl:
 			return "hndfl";
+		case whole:
+			return "whole";
 		default:
 			return mmt;
 
@@ -176,6 +187,7 @@ findMeasurement = function(recipeReq) {
 	var qtsUpper = qts.toUpperCase();
 	var qtUpper = qt.toUpperCase();
 	var hndflUpper = hndfl.toUpperCase();
+	var wholeUpper = whole.toUpperCase();
 
 	var mmtArray = [];
 
@@ -247,6 +259,11 @@ findMeasurement = function(recipeReq) {
 	if (recipeReq.includes(zstOfUpper)) {
 		addToMmtArray(mmtArray, zstOf, recipeReq, zstOfUpper);
 	} 
+	if (recipeReq.includes(sprngsUpper)) {
+		addToMmtArray(mmtArray, sprngs, recipeReq, sprngsUpper);	
+	} else if (recipeReq.includes(sprngUpper)) {
+		addToMmtArray(mmtArray, sprng, recipeReq, sprngUpper);
+	}
 	if (recipeReq.includes(qtsUpper)) {
 		addToMmtArray(mmtArray, qts, recipeReq, qtsUpper);
 	} else if (recipeReq.includes(qtUpper)) {
@@ -254,6 +271,9 @@ findMeasurement = function(recipeReq) {
 	}
 	if (recipeReq.includes(hndflUpper)) {
 		addToMmtArray(mmtArray, hndfl, recipeReq, hndflUpper);
+	}
+	if (recipeReq.includes(wholeUpper)) {
+		addToMmtArray(mmtArray, whole, recipeReq, wholeUpper);
 	}
 
 	var firstMmt, currentLowest;
@@ -315,7 +335,7 @@ splitIngredient = function(rest) {
 
 removeGrams = function(ingredient) {
 	if (ingredient.includes("grams") || ingredient.includes("milliliters")) {
-		return ingredient.replace(/(\/[0-9]+ (grams)?(milliliters)?)/, "");	
+		return ingredient.replace(/(\/[0-9]+ (grams)?(milliliters)?)( )?/, "");	
 	} else if (ingredient.substring(0,2) == "of") {
 		return ingredient.replace("of", "").trim();	
 	} else {
@@ -485,8 +505,15 @@ for (var i = 0; i < ingredients.length; i++) {
 
 	var ingredientCell = document.createElement("td");
 	ingredientCell.classList.add("ingredient");
+
+	var ingredientLink = document.createElement("a");
+	ingredientLink.classList.add('link');
+	ingredientLink.href = "https://www.google.com/search?q=" + recipeRequirementObj.ingredient;
+	ingredientLink.target = "_blank";
+
 	var ingredientCellText = document.createTextNode(recipeRequirementObj.ingredient);
-	ingredientCell.appendChild(ingredientCellText);
+	ingredientLink.appendChild(ingredientCellText);
+	ingredientCell.appendChild(ingredientLink);
 	row.appendChild(ingredientCell);
 
 	if (recipeRequirementObj.prep) {
@@ -530,6 +557,8 @@ var commonIngredients = [
 	"dough",
 	"panko",
 	"meatballs",
+	"cookies",
+	"nuts",
 	"sauce"];
 
 var newDirections = document.createElement('ul');
@@ -554,6 +583,7 @@ for (var i = 0; i < directions.length; i++) {
 					ingredient == 'and' ||
 					ingredient == 'to' ||
 					ingredient == 'a' ||
+					ingredient == 'in' ||
 					ingredient == 'of') {
 					continue;
 				}
@@ -563,7 +593,9 @@ for (var i = 0; i < directions.length; i++) {
 					step = boldIngredient(step, ingredientLowerCase);
 				}
 			}
-		} else {
+		} else if (ingredient == "") {
+			continue;
+		}else {
 			var ingredientLowerCase = ingredient.toLowerCase();
 			if (step.includes(ingredient)) {
 				step = boldIngredient(step, ingredient);
