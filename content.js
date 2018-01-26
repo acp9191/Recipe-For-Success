@@ -1,43 +1,7 @@
 (function() {
-	var ingredients = document.getElementsByClassName('recipe-ingredients')[0].children;
-	var body = document.querySelectorAll('body')[0];
-	var container = document.getElementById('container');
-	var header = document.getElementById('siteNavMount');
-	var recipeTitle = document.getElementsByClassName('recipe-title')[0].textContent.trim();
-	var subtitles = document.getElementsByClassName('recipe-yield-value');
-	var directions = document.getElementsByClassName('recipe-steps')[0].children;
-	var picture = document.getElementsByClassName('media-container')[0].children[0];
 
-	container.style.display = "none";
-	header.style.display = "none";
-	body.style.background = "white";
-
-	var title = document.createElement('div');
-	title.classList.add("new-recipe-title");
-	var titleNode = document.createTextNode(recipeTitle);
-	title.appendChild(titleNode);
-	body.appendChild(title);
-
-	var timeElement = document.createElement('div');
-	timeElement.classList.add("new-recipe-subtitle");
-	var timeNode = document.createTextNode(subtitles[1].textContent);
-	timeElement.appendChild(timeNode);
-	title.appendChild(timeElement);
-
-	var servingsElement = document.createElement('div');
-	servingsElement.classList.add("new-recipe-subtitle");
-	var servingsNode = document.createTextNode(subtitles[0].textContent);
-	servingsElement.appendChild(servingsNode);
-	title.appendChild(servingsElement);
-
-	var pictureContainer = document.createElement('div');
-	pictureContainer.classList.add('picture-container');
-	body.appendChild(pictureContainer)
-
-	var pictureElement = document.createElement('img');
-	pictureElement.src = picture.src;
-	pictureContainer.appendChild(pictureElement);
-
+	// Measurements
+	// TODO: make into enum
 	var tbsps = "tablespoons";
 	var tbsp = "tablespoon";
 	var tsps = "teaspoons";
@@ -75,7 +39,38 @@
 	var stlks = "stalks";
 	var stlk = "stalk";
 	var whole = "whole";
+	var hds = "heads";
+	var hd = "head";
 
+	// common ingredients to be bolded in instructions
+	var commonIngredients = [
+		"salt", 
+		"pepper", 
+		"mixture", 
+		"lemon", 
+		"juice", 
+		"liquid", 
+		"water", 
+		"meat", 
+		"beef", 
+		"steak", 
+		"pasta", 
+		"chicken", 
+		"soup",
+		"cheese",
+		"herbs",
+		"vegetables",
+		"dough",
+		"panko",
+		"meatballs",
+		"cookies",
+		"nuts",
+		"sauce"];
+
+	// bold ingredient in instruction
+	function boldIngredient(step, ingredient) {
+		return step.replace(new RegExp('\\b' + ingredient + '\\b', 'gi'), "<b>" + ingredient + "</b>");
+	}
 
 	replaceMeasurement = function(mmt) {
 
@@ -146,17 +141,23 @@
 				return "hndfl";
 			case whole:
 				return "whole";
+			case hds:
+				return "hds";
+			case hd:
+				return "hd";
 			default:
 				return mmt;
 
 		}
 	}
+
 	addToMmtArray = function(mmtArray, mmt, recipeReq, mmtUpper) {
 		return mmtArray.push({mmt: mmt, index: recipeReq.indexOf(mmtUpper)});
 	}
 
 	findMeasurement = function(recipeReq) {
 
+		// put everything to uppercase (for case insensitivity)
 		recipeReq = recipeReq.toUpperCase();
 		var tbspsUpper = tbsps.toUpperCase();
 		var tbspUpper = tbsp.toUpperCase();
@@ -189,9 +190,12 @@
 		var qtUpper = qt.toUpperCase();
 		var hndflUpper = hndfl.toUpperCase();
 		var wholeUpper = whole.toUpperCase();
+		var hdsUpper = hds.toUpperCase();
+		var hdUpper = hd.toUpperCase();
 
 		var mmtArray = [];
 
+		// check which measurements are in the recipe requirement
 		if (recipeReq.includes(tbspsUpper)) {
 			addToMmtArray(mmtArray, tbsps, recipeReq, tbspsUpper);
 		} else if (recipeReq.includes(tbspUpper)) {
@@ -276,13 +280,18 @@
 		if (recipeReq.includes(wholeUpper)) {
 			addToMmtArray(mmtArray, whole, recipeReq, wholeUpper);
 		}
+		if (recipeReq.includes(hdsUpper)) {
+			addToMmtArray(mmtArray, hds, recipeReq, hdsUpper);
+		} else if (recipeReq.includes(hdUpper)) {
+			addToMmtArray(mmtArray, hd, recipeReq, hdUpper);
+		}
 
-		var firstMmt, currentLowest;
-		console.log(mmtArray);
-
+		// if there are no measurements, return empty string
 		if (mmtArray.length <= 0) {
 			return "";
 		} else {
+			// return measurement that occurs first in the array
+			var firstMmt, currentLowest;
 			currentLowest = recipeReq.length;
 			for (var i = 0; i < mmtArray.length; i++) {
 				if (mmtArray[i].index <= currentLowest) {
@@ -293,6 +302,23 @@
 			return firstMmt;
 		}
 
+	}
+
+	// (garlic) cloves are considered a measurement
+	// they can come before or after ingredient
+	// ie. garlic cloves 
+	// or cloves of garlic
+	function replaceCloves(recipeRequirementObj) {
+		if (!recipeRequirementObj.measurement && recipeRequirementObj.prep.toUpperCase().includes(clvs.toUpperCase())) {
+			recipeRequirementObj.measurement = "clv";
+			var diff = getDifference2(clvs, recipeRequirementObj.prep).trim();
+			recipeRequirementObj.prep = diff;
+		} else if (!recipeRequirementObj.measurement && recipeRequirementObj.prep.toUpperCase().includes(clv.toUpperCase())) {
+			recipeRequirementObj.measurement = "clv";
+			var diff = getDifference2(clv, recipeRequirementObj.prep).trim();
+			recipeRequirementObj.prep = diff;
+		}
+		return recipeRequirementObj;
 	}
 
 	splitRestOfIngredient = function(splitRest, rest, delimiter) {
@@ -346,6 +372,11 @@
 	}
 
 	parseReq = function(recipeReq) {
+		// recipe requirement is split into 4 categories
+		// quantity (amount)
+		// measurement (one from above)
+		// ingredient (taken from website)
+		// prep (or other description)
 		recipeReqObj = {
 			quantity: "",
 			measurement: "",
@@ -368,10 +399,12 @@
 		} else {
 			rest = recipeReq.trim();
 		}
+
 		var splitRest = splitIngredient(rest);
 		console.log(splitRest);
 		recipeReqObj.ingredient = removeGrams(splitRest.ingredient);
 		recipeReqObj.prep = splitRest.prep;
+
 		if (recipeReqObj.quantity.includes("to")) {
 			recipeReqObj.quantity = recipeReqObj.quantity.replace(" to ", "-");
 		} else if (recipeReqObj.quantity.includes("or")) {
@@ -379,45 +412,93 @@
 		}
 		recipeReqObj.measurement = replaceMeasurement(recipeReqObj.measurement);
 
-
 		console.log(recipeReqObj);
 
 		return recipeReqObj;
 	}
 
-	function getDifference2(string_a, string_b) {
+	function getDifference2(string1, string2) {
 
-		if (!string_a) {
-			return string_b;
+		if (!string1) {
+			return string2;
 		}
 
-		var first_occurance = string_b.indexOf(string_a);
+		var firstOccurance = string2.indexOf(string1);
 	 
-	   	string_a_length = string_a.length;
+	   	string1Length = string1.length;
 
-	   	if (first_occurance == 0) {
-	     	new_string = string_b.substring(string_a_length);
+	   	if (firstOccurance == 0) {
+	     	newString = string2.substring(string1Length);
 	   	} else {
-	     	new_string = string_b.substring(0, first_occurance);
-	     	new_string += string_b.substring(first_occurance + string_a_length);  
+	     	newString = string2.substring(0, firstOccurance);
+	     	newString += string2.substring(firstOccurance + string1Length);  
 	   	}
 	   
-	   	return new_string;
+	   	return newString;
 	}
 
-	function replaceCloves(recipeRequirementObj) {
-		if (!recipeRequirementObj.measurement && recipeRequirementObj.prep.toUpperCase().includes(clvs.toUpperCase())) {
-			recipeRequirementObj.measurement = "clv";
-			var diff = getDifference2(clvs, recipeRequirementObj.prep).trim();
-			recipeRequirementObj.prep = diff;
-		} else if (!recipeRequirementObj.measurement && recipeRequirementObj.prep.toUpperCase().includes(clv.toUpperCase())) {
-			recipeRequirementObj.measurement = "clv";
-			var diff = getDifference2(clv, recipeRequirementObj.prep).trim();
-			recipeRequirementObj.prep = diff;
-		}
-		return recipeRequirementObj;
+	createCell = function(classToAdd, textToAdd) {
+		var cell = document.createElement("td");
+		cell.classList.add(classToAdd);
+		var cellText = document.createTextNode(textToAdd);
+		cell.appendChild(cellText);
+		row.appendChild(cell);
 	}
 
+	createPrepTooltip = function(prep) {
+		var postCell = document.createElement("span");
+		var postCellText = document.createTextNode(prep);
+		postCell.classList.add("tooltip");
+		postCell.appendChild(postCellText);
+		ingredientCell.appendChild(postCell);
+	}
+
+	// extract elements from page
+	var ingredients = document.getElementsByClassName('recipe-ingredients')[0].children;
+	var body = document.querySelectorAll('body')[0];
+	var container = document.getElementById('container');
+	var header = document.getElementById('siteNavMount');
+	var recipeTitle = document.getElementsByClassName('recipe-title')[0].textContent.trim();
+	var subtitles = document.getElementsByClassName('recipe-yield-value');
+	var directions = document.getElementsByClassName('recipe-steps')[0].children;
+	var pictureUrl = document.getElementsByClassName('media-container')[0].children[0].src;
+
+	// if there is no picture, there is usually a video
+	if (!pictureUrl) {
+		pictureUrl = document.getElementsByClassName('nytd-player-poster')[0].style.backgroundImage;
+		pictureUrl = pictureUrl.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+	}
+
+	container.style.display = "none";
+	header.style.display = "none";
+	body.style.background = "white";
+
+
+	var title = document.createElement('div');
+	title.classList.add("new-recipe-title");
+	var titleNode = document.createTextNode(recipeTitle);
+	title.appendChild(titleNode);
+	body.appendChild(title);
+
+	var timeElement = document.createElement('div');
+	timeElement.classList.add("new-recipe-subtitle");
+	var timeNode = document.createTextNode(subtitles[1].textContent);
+	timeElement.appendChild(timeNode);
+	title.appendChild(timeElement);
+
+	var servingsElement = document.createElement('div');
+	servingsElement.classList.add("new-recipe-subtitle");
+	var servingsNode = document.createTextNode(subtitles[0].textContent);
+	servingsElement.appendChild(servingsNode);
+	title.appendChild(servingsElement);
+
+	var pictureContainer = document.createElement('div');
+	pictureContainer.classList.add('picture-container');
+	body.appendChild(pictureContainer)
+
+	var pictureElement = document.createElement('img');
+	pictureElement.src = pictureUrl;
+	pictureContainer.appendChild(pictureElement);
 
 	var ingredientsList = [];
 
@@ -435,6 +516,7 @@
 		var pre = childNodes[0].textContent.trim();
 
 		var ingredient, post;
+
 		if (childNodes[1]) {
 			ingredient = childNodes[1].textContent;
 			console.log("ingredient:", ingredient);
@@ -452,6 +534,7 @@
 		recipeRequirementObj = parseReq(recipeRequirement);
 
 		var diff;
+
 		if (ingredient && recipeRequirementObj.ingredient) {
 			diff = getDifference2(ingredient, recipeRequirementObj.ingredient);	
 		}
@@ -488,21 +571,8 @@
 		var row = document.createElement("tr");
 		row.classList.add("requirement-row");
 
-		var quantityCell = document.createElement("td");
-		quantityCell.classList.add("quantity-cell");
-		if (!recipeRequirementObj.quantity && !recipeRequirementObj.measurement) {
-			recipeRequirementObj.quantity = ".";
-			quantityCell.style.color = "white";
-		}
-		var quantityCellText = document.createTextNode(recipeRequirementObj.quantity);
-		quantityCell.appendChild(quantityCellText);
-		row.appendChild(quantityCell);
-
-		var preCell = document.createElement("td");
-		preCell.classList.add("measurement");
-		var preCellText = document.createTextNode(recipeRequirementObj.measurement);
-		preCell.appendChild(preCellText);
-		row.appendChild(preCell);
+		createCell("quantity-cell", recipeRequirementObj.quantity);
+		createCell("measurement", recipeRequirementObj.measurement);
 
 		var ingredientCell = document.createElement("td");
 		ingredientCell.classList.add("ingredient");
@@ -518,11 +588,7 @@
 		row.appendChild(ingredientCell);
 
 		if (recipeRequirementObj.prep) {
-			var postCell = document.createElement("span");
-			var postCellText = document.createTextNode(recipeRequirementObj.prep);
-			postCell.classList.add("tooltip");
-			postCell.appendChild(postCellText);
-			ingredientCell.appendChild(postCell);
+			createPrepTooltip(recipeRequirementObj.prep);
 		}
 
 		// add the row to the end of the table body
@@ -538,37 +604,10 @@
 	// appends <table> into <body>
 	body.appendChild(tbl);
 
-	var commonIngredients = [
-		"salt", 
-		"pepper", 
-		"mixture", 
-		"lemon", 
-		"juice", 
-		"liquid", 
-		"water", 
-		"meat", 
-		"beef", 
-		"steak", 
-		"pasta", 
-		"chicken", 
-		"soup",
-		"cheese",
-		"herbs",
-		"vegetables",
-		"dough",
-		"panko",
-		"meatballs",
-		"cookies",
-		"nuts",
-		"sauce"];
 
 	var newDirections = document.createElement('ul');
 	newDirections.classList.add("new-directions");
 	body.appendChild(newDirections);
-
-	function boldIngredient(step, ingredient) {
-		return step.replace(new RegExp('\\b' + ingredient + '\\b', 'gi'), "<b>" + ingredient + "</b>");
-	}
 
 	for (var i = 0; i < directions.length; i++) {
 		var step = directions[i].outerHTML;
@@ -630,6 +669,4 @@
 
 	console.log(ingredientsList);
 
-
 })();
-
