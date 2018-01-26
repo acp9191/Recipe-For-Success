@@ -41,6 +41,8 @@
 	var whole = "whole";
 	var hds = "heads";
 	var hd = "head";
+	var pnts = "pints";
+	var pnt = "pint";
 
 	// common ingredients to be bolded in instructions
 	var commonIngredients = [
@@ -145,6 +147,10 @@
 				return "hds";
 			case hd:
 				return "hd";
+			case pnts:
+				return "pnts";
+			case pnt:
+				return "pnt";
 			default:
 				return mmt;
 
@@ -192,6 +198,8 @@
 		var wholeUpper = whole.toUpperCase();
 		var hdsUpper = hds.toUpperCase();
 		var hdUpper = hd.toUpperCase();
+		var pntsUpper = pnts.toUpperCase();
+		var pntUpper = pnt.toUpperCase();
 
 		var mmtArray = [];
 
@@ -284,6 +292,11 @@
 			addToMmtArray(mmtArray, hds, recipeReq, hdsUpper);
 		} else if (recipeReq.includes(hdUpper)) {
 			addToMmtArray(mmtArray, hd, recipeReq, hdUpper);
+		}
+		if (recipeReq.includes(pntsUpper)) {
+			addToMmtArray(mmtArray, pnts, recipeReq, pntsUpper);
+		} else if (recipeReq.includes(pntUpper)) {
+			addToMmtArray(mmtArray, pnt, recipeReq, pntUpper);
 		}
 
 		// if there are no measurements, return empty string
@@ -393,7 +406,9 @@
 		var rest;
 		if (recipeReqObj.measurement) {
 			rest = recipeReq.split(recipeReqObj.measurement)[1];
-			if (rest) {rest = rest.trim()}
+			if (rest) { 
+				rest = rest.trim() 
+			}
 		} else if (recipeReqObj.quantity) {
 			rest = recipeReq.split(recipeReqObj.quantity)[1].trim();
 		} else {
@@ -405,11 +420,14 @@
 		recipeReqObj.ingredient = removeGrams(splitRest.ingredient);
 		recipeReqObj.prep = splitRest.prep;
 
+		// "10 to 15" becomes 10-15
+		// "3 or 4" becomes 3-4
 		if (recipeReqObj.quantity.includes("to")) {
 			recipeReqObj.quantity = recipeReqObj.quantity.replace(" to ", "-");
 		} else if (recipeReqObj.quantity.includes("or")) {
 			recipeReqObj.quantity = recipeReqObj.quantity.replace(" or ", "-");
 		}
+
 		recipeReqObj.measurement = replaceMeasurement(recipeReqObj.measurement);
 
 		console.log(recipeReqObj);
@@ -515,20 +533,20 @@
 		
 		var pre = childNodes[0].textContent.trim();
 
-		var ingredient, post;
+		var ingredient, prep;
 
 		if (childNodes[1]) {
 			ingredient = childNodes[1].textContent;
 			console.log("ingredient:", ingredient);
 		}
 		if (childNodes[2]) {
-			post = childNodes[2].textContent.trim();
+			prep = childNodes[2].textContent.trim();
 		}
 
 		var recipeRequirement = (quantity ? quantity + " " : "") 
 			+ (pre ? pre + " " : "")
 			+ ingredient
-			+ (post ? post : "");
+			+ (prep ? prep : "");
 		console.log(recipeRequirement);
 
 		recipeRequirementObj = parseReq(recipeRequirement);
